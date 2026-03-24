@@ -16,7 +16,6 @@ public class MainApp {
 
         try {
 
-            // 🔐 AUTH MENU
             while (currentUser == null) {
 
                 System.out.println("\n1) Register\n2) Login\n3) Exit");
@@ -49,7 +48,6 @@ public class MainApp {
                 }
             }
 
-            // 📂 MAIN MENU
             while (true) {
 
                 System.out.println("\n1) Upload");
@@ -64,7 +62,6 @@ public class MainApp {
 
                 switch (ch) {
 
-                    // ✅ UPLOAD
                     case 1:
                         System.out.print("File name: ");
                         String name = sc.nextLine();
@@ -82,7 +79,6 @@ public class MainApp {
                         System.out.println("Uploaded successfully");
                         break;
 
-                    // ✅ DOWNLOAD
                     case 2:
                         System.out.print("File name: ");
                         name = sc.nextLine();
@@ -105,7 +101,6 @@ public class MainApp {
 
                         break;
 
-                    // ✅ DELETE
                     case 3:
                         System.out.print("File name: ");
                         name = sc.nextLine();
@@ -116,12 +111,10 @@ public class MainApp {
                         logger.log(currentUser, "Deleted file: " + name);
                         break;
 
-                    // ✅ LIST FILES
                     case 4:
                         storage.listFiles(currentUser);
                         break;
 
-                    // ✅ SEARCH
                     case 5:
                         System.out.print("Keyword: ");
                         String keyword = sc.nextLine();
@@ -140,7 +133,6 @@ public class MainApp {
                         logger.log(currentUser, "Searched: " + keyword);
                         break;
 
-                    // ✅ EXIT
                     case 6:
                         logger.log(currentUser, "Logged out");
                         System.out.println("Goodbye!");
