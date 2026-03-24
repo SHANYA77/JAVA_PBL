@@ -5,16 +5,16 @@ The project implements a secure storage system that allows users to store, retri
 
 ## Features
 
-User Authentication (Register/Login)
-File Upload (with encoding)
-File Download (with decoding)
-File Deletion
-List User Files
-Keyword-based File Search
-User-specific file access (no file sharing between users)
+- User Authentication (Register/Login)
+- File Upload (with encoding)
+- File Download (with decoding)
+- File Deletion
+- List User Files
+- Keyword-based File Search
+- User-specific file access (no file sharing between users)
 
 ## Project Structure
-
+```
 JAVA_PROJECT/
 │
 ├── MainApp.java          → Main driver (UI + flow control)
@@ -27,18 +27,18 @@ JAVA_PROJECT/
 ├── users.txt            → Stores user credentials
 ├── log.txt              → Stores logs
 └── storage/             → Stores uploaded files
-
+```
 ## Technologies Used
 
-Java (Core Java)
-File Handling (BufferedReader, BufferedWriter)
-Base64 Encoding (for secure storage)
-Data Structures (HashMap, ArrayList)
+- Java (Core Java)
+- File Handling (BufferedReader, BufferedWriter)
+- Base64 Encoding (for secure storage)
+- Data Structures (HashMap, ArrayList)
 
 ## Future Improvements
 
-AES Encryption instead of Base64
-GUI (JavaFX / Swing)
-Cloud storage integration
-File sharing between users
-Database (MySQL) instead of text files
+- AES Encryption instead of Base64
+- GUI (JavaFX / Swing)
+- Cloud storage integration
+- File sharing between users
+- Database (MySQL) instead of text files
