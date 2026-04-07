@@ -1,40 +1,33 @@
-import java.util.*;
+import java.io.*;
 
 public class SearchService {
 
-    private Map<String, List<String>> index = new HashMap<>();
+    public static void search(String user, String keyword) throws Exception {
 
-    public void indexContent(String user, String file, String content) {
-        String fullName = user + "_" + file;
+        File folder = new File("data/" + user);
+        File[] files = folder.listFiles();
 
-        String[] words = content.toLowerCase().split("\\W+");
-
-        for (String w : words) {
-            index.putIfAbsent(w, new ArrayList<>());
-
-            if (!index.get(w).contains(fullName)) {
-                index.get(w).add(fullName);
-            }
-        }
-    }
-
-    public List<String> search(String keyword, String user) {
-        List<String> results = index.getOrDefault(keyword.toLowerCase(), new ArrayList<>());
-
-        List<String> filtered = new ArrayList<>();
-
-        for (String f : results) {
-            if (f.startsWith(user + "_")) {
-                filtered.add(f);
-            }
+        if (files == null) {
+            System.out.println("No data.");
+            return;
         }
 
-        return filtered;
-    }
+        for (File file : files) {
 
-    public void removeFile(String fullName) {
-        for (String key : index.keySet()) {
-            index.get(key).remove(fullName);
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line = br.readLine();
+
+            if (line != null) {
+                String[] parts = line.split("\\|");
+                String decrypted = CryptoService.decrypt(parts[1]);
+
+                if (decrypted.toLowerCase().contains(keyword.toLowerCase())) {
+                    System.out.println("📄 Found in: " + file.getName());
+                    System.out.println(decrypted);
+                }
+            }
+
+            br.close();
         }
     }
 }
