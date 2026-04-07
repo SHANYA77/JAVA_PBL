@@ -1,150 +1,98 @@
-import java.util.*;
+import java.util.Scanner;
 
 public class MainApp {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         Scanner sc = new Scanner(System.in);
+        KeyService.loadKey();
 
-        AuthService auth = new AuthService();
-        CryptoService crypto = new CryptoService();
-        StorageService storage = new StorageService();
-        SearchService search = new SearchService();
-        LoggerService logger = new LoggerService();
+        while (true) {
+            System.out.println("\n1.Register 2.Login 3.Exit");
+            int ch = sc.nextInt();
 
-        String currentUser = null;
+            if (ch == 1) {
+                System.out.print("Username: ");
+                String u = sc.next();
+                System.out.print("Password: ");
+                String p = sc.next();
 
-        try {
+                AuthService.register(u, p);
+            }
 
-            while (currentUser == null) {
+            else if (ch == 2) {
+                System.out.print("Username: ");
+                String u = sc.next();
+                System.out.print("Password: ");
+                String p = sc.next();
 
-                System.out.println("\n1) Register\n2) Login\n3) Exit");
-                int ch = sc.nextInt();
-                sc.nextLine();
+                if (AuthService.login(u, p)) {
+                    System.out.println("Login successful!");
 
-                if (ch == 1) {
-                    auth.register();
-                }
+                    int opt;
+                    do {
+                    System.out.println("\n1.Store\n2.View\n3.Search\n4.Delete All\n5.Delete One\n6.Edit\n7.Export\n8.Logout\n");                        opt = sc.nextInt();
 
-                else if (ch == 2) {
-                    System.out.print("Username: ");
-                    String u = sc.nextLine();
+                        switch (opt) {
+                            case 1:
+                                sc.nextLine();
+                                System.out.print("Enter file name: ");
+                                String fname = sc.next();
+                                sc.nextLine(); // clear buffer
+                                System.out.print("Enter text: ");
+                                String text = sc.nextLine();
+                                FileService.store(u, fname, text);
+                                break;
 
-                    System.out.print("Password: ");
-                    String p = sc.nextLine();
+                            case 2:
+                                FileService.view(u);
+                                break;
 
-                    currentUser = auth.login(u, p);
+                            case 3:
+                                System.out.print("Keyword: ");
+                                String k = sc.next();
+                                SearchService.search(u, k);
+                                break;
 
-                    if (currentUser == null) {
-                        System.out.println("Invalid credentials!");
-                    } else {
-                        System.out.println("Login successful!");
-                        logger.log(currentUser, "Logged in");
-                    }
-                }
+                            case 4:
+                                FileService.deleteAll(u);
+                                break;
+                            case 5:
+                                FileService.listFiles(u);
+                                System.out.print("Enter file name to delete: ");
+                                fname = sc.next();
+                                FileService.deleteOne(u, fname);
+                                break;
+                            case 6:
+                                if (!FileService.listFiles(u)) break;
+                                System.out.print("Enter file name to edit: ");
+                                String editName = sc.next();
+                                sc.nextLine();
+                                System.out.print("Enter new content: ");
+                                String newText = sc.nextLine();
+                                FileService.editFile(u, editName, newText);
+                                break;
 
-                else {
-                    return;
+                            case 7:
+                                if (!FileService.listFiles(u)) break;
+                                System.out.print("Enter file name to export: ");
+                                String exportName = sc.next();
+                                FileService.exportFile(u, exportName);
+                                break;
+                            case 8:
+                                System.out.println("Logged out.");
+                                break;
+                            default:
+                                System.out.println("Invalid option!");
+                        }
+
+                    } while (opt != 8);
+                } else {
+                    System.out.println("❌ Invalid login!");
                 }
             }
 
-            while (true) {
-
-                System.out.println("\n1) Upload");
-                System.out.println("2) Download");
-                System.out.println("3) Delete");
-                System.out.println("4) List Files");
-                System.out.println("5) Search");
-                System.out.println("6) Exit");
-
-                int ch = sc.nextInt();
-                sc.nextLine();
-
-                switch (ch) {
-
-                    case 1:
-                        System.out.print("File name: ");
-                        String name = sc.nextLine();
-
-                        System.out.print("Content: ");
-                        String content = sc.nextLine();
-
-                        String enc = crypto.encrypt(content);
-
-                        storage.upload(currentUser, name, enc);
-                        search.indexContent(currentUser, name, content);
-
-                        logger.log(currentUser, "Uploaded file: " + name);
-
-                        System.out.println("Uploaded successfully");
-                        break;
-
-                    case 2:
-                        System.out.print("File name: ");
-                        name = sc.nextLine();
-
-                        String encrypted = storage.download(currentUser, name);
-
-                        if (encrypted == null) {
-                            System.out.println("File not found");
-                            break;
-                        }
-
-                        try {
-                            String decrypted = crypto.decrypt(encrypted);
-                            System.out.println("Content: " + decrypted);
-
-                            logger.log(currentUser, "Downloaded file: " + name);
-                        } catch (Exception e) {
-                            System.out.println("Decryption failed");
-                        }
-
-                        break;
-
-                    case 3:
-                        System.out.print("File name: ");
-                        name = sc.nextLine();
-
-                        storage.delete(currentUser, name);
-                        search.removeFile(currentUser + "_" + name);
-
-                        logger.log(currentUser, "Deleted file: " + name);
-                        break;
-
-                    case 4:
-                        storage.listFiles(currentUser);
-                        break;
-
-                    case 5:
-                        System.out.print("Keyword: ");
-                        String keyword = sc.nextLine();
-
-                        List<String> results = search.search(keyword, currentUser);
-
-                        if (results.isEmpty()) {
-                            System.out.println("No results found");
-                        } else {
-                            System.out.println("Results:");
-                            for (String f : results) {
-                                System.out.println(f.replace(currentUser + "_", ""));
-                            }
-                        }
-
-                        logger.log(currentUser, "Searched: " + keyword);
-                        break;
-
-                    case 6:
-                        logger.log(currentUser, "Logged out");
-                        System.out.println("Goodbye!");
-                        return;
-
-                    default:
-                        System.out.println("Invalid choice");
-                }
-            }
-
-        } catch (Exception e) {
-            System.out.println("System error occurred");
+            else break;
         }
     }
 }
