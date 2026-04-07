@@ -20,12 +20,12 @@ JAVA_PROJECT/
 ├── MainApp.java          → Main driver (UI + flow control)
 ├── AuthService.java      → Handles user authentication
 ├── CryptoService.java   → Handles encoding/decoding
-├── StorageService.java  → Handles file storage operations
+├── FileService.java  → Handles file storage operations
 ├── SearchService.java   → Implements search functionality
-├── LoggerService.java   → Logs user activities
+├── KeyService.java   → Logs user activities
 │
 ├── users.txt            → Stores user credentials
-├── log.txt              → Stores logs
+├── key.txt              → Stores logs
 └── storage/             → Stores uploaded files
 ```
 ## Technologies Used
