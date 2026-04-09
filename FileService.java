@@ -13,7 +13,7 @@ public static void editFile(String user, String fileName, String newText) throws
     File file = new File("data/" + user + "/" + fileName);
 
     if (!file.exists()) {
-        System.out.println("❌ File not found.");
+        System.out.println("File not found.");
         return;
     }
 
@@ -24,7 +24,7 @@ public static void editFile(String user, String fileName, String newText) throws
     fw.write(time + "|" + encrypted);
     fw.close();
 
-    System.out.println("✏️ File updated successfully!");
+    System.out.println("File updated successfully!");
 }
 // ================= EXPORT FILE =================
 public static void exportFile(String user, String fileName) throws Exception {
@@ -32,7 +32,7 @@ public static void exportFile(String user, String fileName) throws Exception {
     File file = new File("data/" + user + "/" + fileName);
 
     if (!file.exists()) {
-        System.out.println("❌ File not found.");
+        System.out.println("File not found.");
         return;
     }
 
@@ -41,11 +41,15 @@ public static void exportFile(String user, String fileName) throws Exception {
     br.close();
 
     if (line == null) {
-        System.out.println("❌ Empty file.");
+        System.out.println("Empty file.");
         return;
     }
 
     String[] parts = line.split("\\|");
+    if (parts.length < 2) {
+        System.out.println("Corrupted file format.");
+        return;
+    }
     String decrypted = CryptoService.decrypt(parts[1]);
 
     String exportName = "decrypted_" + fileName;
@@ -54,7 +58,7 @@ public static void exportFile(String user, String fileName) throws Exception {
     fw.write(decrypted);
     fw.close();
 
-    System.out.println("📤 File exported as: " + exportName);
+    System.out.println("File exported as: " + exportName);
 }
 public static boolean listFiles(String user) {
 
@@ -62,11 +66,11 @@ public static boolean listFiles(String user) {
     File[] files = folder.listFiles();
 
     if (files == null || files.length == 0) {
-        System.out.println("❌ No files found.");
+        System.out.println("No files found.");
         return false;
     }
 
-    System.out.println("📂 Your Files:");
+    System.out.println("Your Files:");
     for (File f : files) {
         System.out.println("- " + f.getName());
     }
@@ -79,12 +83,12 @@ public static void deleteOne(String user, String fileName) {
 
     if (file.exists()) {
         if (file.delete()) {
-            System.out.println("🗑️ Deleted: " + fileName);
+            System.out.println("Deleted: " + fileName);
         } else {
-            System.out.println("❌ Unable to delete file.");
+            System.out.println("Unable to delete file.");
         }
     } else {
-        System.out.println("❌ File not found.");
+        System.out.println("File not found.");
     }
 }
     public static void store(String user, String fileName, String text) throws Exception {
@@ -103,7 +107,7 @@ public static void deleteOne(String user, String fileName) {
     fw.write(time + "|" + encrypted);
     fw.close();
 
-    System.out.println("✅ Stored as: " + fileName);
+    System.out.println("Stored as: " + fileName);
 }
 
     // ================= VIEW =================
@@ -125,11 +129,15 @@ public static void deleteOne(String user, String fileName) {
 
             if (line != null) {
                 String[] parts = line.split("\\|");
+                if (parts.length < 2) {
+                    System.out.println("Skipping corrupted file: " + file.getName());
+                    continue;
+                }
 
                 long time = Long.parseLong(parts[0]);
                 String decrypted = CryptoService.decrypt(parts[1]);
 
-                System.out.println("📄 File: " + file.getName());
+                System.out.println("File: " + file.getName());
                 System.out.println("Time: " + new java.util.Date(time));
                 System.out.println("Data: " + decrypted);
                 System.out.println("---------------------");
@@ -151,6 +159,6 @@ public static void deleteOne(String user, String fileName) {
             }
         }
 
-        System.out.println("🗑️ All notes deleted!");
+        System.out.println("All notes deleted!");
     }
 }

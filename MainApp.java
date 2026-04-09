@@ -2,6 +2,19 @@ import java.util.Scanner;
 
 public class MainApp {
 
+    private static int readInt(Scanner sc, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            if (sc.hasNextInt()) {
+                int value = sc.nextInt();
+                sc.nextLine();
+                return value;
+            }
+            System.out.println("Invalid input. Please enter a number.");
+            sc.nextLine();
+        }
+    }
+
     public static void main(String[] args) throws Exception {
 
         Scanner sc = new Scanner(System.in);
@@ -9,7 +22,7 @@ public class MainApp {
 
         while (true) {
             System.out.println("\n1.Register 2.Login 3.Exit");
-            int ch = sc.nextInt();
+            int ch = readInt(sc, "Choose option: ");
 
             if (ch == 1) {
                 System.out.print("Username: ");
@@ -31,11 +44,11 @@ public class MainApp {
 
                     int opt;
                     do {
-                    System.out.println("\n1.Store\n2.View\n3.Search\n4.Delete All\n5.Delete One\n6.Edit\n7.Export\n8.Logout\n");                        opt = sc.nextInt();
+                        System.out.println("\n1.Store\n2.View\n3.Search\n4.Delete All\n5.Delete One\n6.Edit\n7.Export\n8.Logout\n");
+                        opt = readInt(sc, "Choose option: ");
 
                         switch (opt) {
                             case 1:
-                                sc.nextLine();
                                 System.out.print("Enter file name: ");
                                 String fname = sc.next();
                                 sc.nextLine(); // clear buffer
@@ -88,11 +101,18 @@ public class MainApp {
 
                     } while (opt != 8);
                 } else {
-                    System.out.println("❌ Invalid login!");
+                    System.out.println("Invalid login!");
                 }
             }
 
-            else break;
+            else if (ch == 3) {
+                System.out.println("Exiting app.");
+                break;
+            } else {
+                System.out.println("Invalid option! Please choose 1, 2 or 3.");
+            }
         }
+
+        sc.close();
     }
 }

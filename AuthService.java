@@ -13,31 +13,52 @@ public class AuthService {
     public static void register(String user, String pass) throws Exception {
 
         if (!isStrongPassword(pass)) {
-            System.out.println("❌ Weak password! Use 8+ chars, number & special char.");
+            System.out.println("Weak password! Use 8+ chars, number & special char.");
             return;
+        }
+
+        File userFile = new File(FILE);
+        if (userFile.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(userFile))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] data = line.split(",", 2);
+                    if (data.length == 2 && data[0].equals(user)) {
+                        System.out.println("Username already exists.");
+                        return;
+                    }
+                }
+            }
         }
 
         String hashed = CryptoService.hashPassword(pass);
 
-        FileWriter fw = new FileWriter(FILE, true);
-        fw.write(user + "," + hashed + "\n");
-        fw.close();
+        try (FileWriter fw = new FileWriter(FILE, true)) {
+            fw.write(user + "," + hashed + "\n");
+        }
 
-        System.out.println("✅ Registered!");
+        System.out.println("Registered!");
     }
 
     public static boolean login(String user, String pass) throws Exception {
         String hashed = CryptoService.hashPassword(pass);
 
-        BufferedReader br = new BufferedReader(new FileReader(FILE));
-        String line;
+        File userFile = new File(FILE);
+        if (!userFile.exists()) {
+            System.out.println("No users found. Please register first.");
+            return false;
+        }
 
-        while ((line = br.readLine()) != null) {
-            String[] data = line.split(",");
-            if (data[0].equals(user) && data[1].equals(hashed)) {
-                return true;
+        try (BufferedReader br = new BufferedReader(new FileReader(userFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",", 2);
+                if (data.length == 2 && data[0].equals(user) && data[1].equals(hashed)) {
+                    return true;
+                }
             }
         }
+
         return false;
     }
 }
